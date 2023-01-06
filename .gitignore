@@ -1,9 +1,9 @@
-# IDE-specific
+# IDE
 *.iml
 .idea
 .vscode
 
-# OS-specific
+# OS
 .DS_Store
 
 # JS
