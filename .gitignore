@@ -6,5 +6,8 @@
 # OS-specific
 .DS_Store
 
-# Other
+# JS
 node_modules
+
+# Go
+/vendor
