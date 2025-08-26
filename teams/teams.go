@@ -57,7 +57,7 @@ func Send(message string, webhookURL ...string) {
 	}
 	if len(targetURL) == 0 {
 		if debug {
-			log.Println("[lazywebhooks.teams] No workflow URL specified, skipping")
+			log.Println("[lazywebhooks.teams] No webhook URL specified, skipping")
 		}
 		return
 	}
