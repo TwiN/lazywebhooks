@@ -20,13 +20,15 @@ var (
 )
 
 // SetUsername sets the username the message will be sent with.
-// Note: Microsoft Teams webhooks don't support custom usernames in the same way as Discord/Slack,
-// but this is kept for API consistency across all webhook providers.
+// Note: Teams workflows don't directly support custom usernames like Discord/Slack,
+// but this is kept for API consistency. The username can be used in workflow logic if needed.
 func SetUsername(user string) {
 	username = user
 }
 
-// SetDefaultWebhookURL sets the webhook URL to send messages to
+// SetDefaultWebhookURL sets the Power Automate workflow URL to send messages to.
+// This should be a "When a HTTP request is received" trigger URL from Power Automate,
+// which replaces the deprecated Office 365 Connector webhooks.
 func SetDefaultWebhookURL(url string) {
 	defaultWebhookURL = url
 }
@@ -36,12 +38,16 @@ func SetDebugMode(value bool) {
 	debug = value
 }
 
-// Send sends a message to webhookURL if it is specified, or defaultWebhookURL if it is not.
+// Send sends a message to a Teams workflow via Power Automate HTTP trigger.
+// Uses webhookURL if specified, or defaultWebhookURL if not.
+//
+// The webhook URL should be from a Power Automate "When a HTTP request is received" trigger.
+// This is the modern replacement for deprecated Office 365 Connector webhooks.
 //
 // Usage:
 //
-//	teams.Send("Hello, world!") // Assuming SetDefaultWebhookURL has been called first, this will use the default webhook URL (otherwise nothing will happen)
-//	teams.Send("Hello, world!", "https://outlook.office.com/webhook/...")
+//	teams.Send("Hello, world!") // Uses default workflow URL set with SetDefaultWebhookURL
+//	teams.Send("Hello, world!", "https://prod-xx.westus.logic.azure.com:443/workflows/.../triggers/manual/paths/invoke?...")
 func Send(message string, webhookURL ...string) {
 	var targetURL string
 	if len(webhookURL) > 0 {
@@ -51,11 +57,20 @@ func Send(message string, webhookURL ...string) {
 	}
 	if len(targetURL) == 0 {
 		if debug {
-			log.Println("[lazywebhooks.teams] No webhook URL specified, skipping")
+			log.Println("[lazywebhooks.teams] No workflow URL specified, skipping")
 		}
 		return
 	}
-	data, err := json.Marshal(payload{Text: message})
+	
+	// Create payload with message and optional username for workflow processing
+	payloadData := payload{
+		Text: message,
+	}
+	if username != "" {
+		payloadData.Username = username
+	}
+	
+	data, err := json.Marshal(payloadData)
 	if err != nil {
 		log.Println("[lazywebhooks.teams] Error marshalling payload:", err.Error())
 		return
@@ -81,5 +96,6 @@ func Send(message string, webhookURL ...string) {
 }
 
 type payload struct {
-	Text string `json:"text"`
+	Text     string `json:"text"`
+	Username string `json:"username,omitempty"`
 }
