@@ -22,3 +22,45 @@ func main() {
 	discord.Send("Hello, world!", "https://discord.com/api/webhooks/0987654321/z9Y8x7W6v5U4t3S2r1Q0p9O8n7M6l5K4j3I2h1G0f9D8e7C6b5A4z3X2c1V0b9N8")
 }
 ```
+
+## slack
+```go
+package main
+
+import (
+	"github.com/TwiN/lazywebhooks/slack"
+)
+
+func main() {
+	// You can set a username if you wish. If you don't, it will default to your webhook's username
+	slack.SetUsername("SomeUsername")
+	// You can set a default webhook URL if you don't want to include the webhook URL in every slack.Send(...) call you make
+	slack.SetDefaultWebhookURL("https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX")
+	// If you don't specify a webhook URL in the slack.Send(...) call, it will use the default webhook URL you set above
+	slack.Send("Hello, world!")
+	slack.Send("My name is John Doe")
+	// Otherwise, if you do set the webhookURL parameter in the slack.Send(...) call, it will use that instead of the default webhook URL
+	slack.Send("Hello, world!", "https://hooks.slack.com/services/T11111111/B11111111/YYYYYYYYYYYYYYYYYYYYYYYY")
+}
+```
+
+## teams
+```go
+package main
+
+import (
+	"github.com/TwiN/lazywebhooks/teams"
+)
+
+func main() {
+	// You can set a username if you wish (though Teams webhooks don't support custom usernames like Discord/Slack)
+	teams.SetUsername("SomeUsername")
+	// You can set a default webhook URL if you don't want to include the webhook URL in every teams.Send(...) call you make
+	teams.SetDefaultWebhookURL("https://outlook.office.com/webhook/...")
+	// If you don't specify a webhook URL in the teams.Send(...) call, it will use the default webhook URL you set above
+	teams.Send("Hello, world!")
+	teams.Send("My name is John Doe")
+	// Otherwise, if you do set the webhookURL parameter in the teams.Send(...) call, it will use that instead of the default webhook URL
+	teams.Send("Hello, world!", "https://outlook.office.com/webhook/...")
+}
+```
