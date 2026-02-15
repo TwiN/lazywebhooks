@@ -74,3 +74,37 @@ func main() {
 	teams.Send("Hello, world!", "https://prod-yy.eastus.logic.azure.com:443/workflows/.../triggers/manual/paths/invoke?...")
 }
 ```
+
+## telegram
+Telegram integration uses the Telegram Bot API to send messages.
+
+### Setup
+1. Create a bot using [@BotFather](https://t.me/botfather) on Telegram
+2. Copy the bot token provided by BotFather (format: `1234567890:ABCdefGHIjklMNOpqrsTUVwxyz`)
+3. Add your bot to a channel or group, or start a chat with it
+4. Get the chat ID:
+   - For groups/channels: Use [@userinfobot](https://t.me/userinfobot) or check `https://api.telegram.org/bot<YourBOTToken>/getUpdates`
+   - For personal chats: Send a message to your bot, then visit `https://api.telegram.org/bot<YourBOTToken>/getUpdates` to see the chat ID
+5. Use the bot token and chat ID in your Go code
+
+```go
+package main
+
+import (
+	"github.com/TwiN/lazywebhooks/telegram"
+)
+
+func main() {
+	// Set default bot token and chat ID
+	telegram.SetDefaultToken("1234567890:ABCdefGHIjklMNOpqrsTUVwxyz")
+	telegram.SetDefaultChatID("-1001234567890")
+	// Send messages using the default bot token and chat ID
+	telegram.Send("Hello, world!")
+	telegram.Send("My name is John Doe")
+	// Or specify a config for this message
+	telegram.Send("Hello, world!", telegram.Config{
+		Token:  "1234567890:ABCdefGHIjklMNOpqrsTUVwxyz",
+		ChatID: "-1001234567890",
+	})
+}
+```
